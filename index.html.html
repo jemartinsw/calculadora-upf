@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora UPF/PR</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --verde-escuro: #606d3d;
+  --verde-medio: #6c8b2d;
+  --verde-vivo: #7aa91a;
+  --amarelo: #ffb82f;
+  --teal: #57a795;
+  --cinza: #525050;
+  --bg: #f5f4ee;
+  --bg-card: #ffffff;
+  --texto: #2a2a2a;
+  --texto-suave: #5e5e5e;
+  --borda: #e2dfd6;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--texto);
+  padding: 2rem 1.25rem 3rem;
+}
+
+/* Índice banner */
+.indice-banner {
+  background: var(--verde-escuro);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+.indice-banner::before {
+  content: '';
+  position: absolute;
+  right: -20px; top: -30px;
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+.indice-banner-left { position: relative; z-index: 1; }
+.indice-banner-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 5px;
+}
+.indice-banner-mes {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--amarelo);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.indice-banner-valor {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.2rem;
+  color: var(--amarelo);
+  position: relative; z-index: 1;
+  line-height: 1;
+}
+
+/* Card */
+.card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--borda);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.card-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--verde-medio);
+  margin-bottom: 1.1rem;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 1.25rem;
+}
+.tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: 9px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texto-suave);
+  cursor: pointer;
+  transition: all .18s;
+}
+.tab.on {
+  background: var(--verde-escuro);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(96,109,61,.2);
+}
+
+/* Fields */
+.field-lbl {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+  margin-bottom: 7px;
+}
+.inp-wrap { position: relative; margin-bottom: 1.1rem; }
+.inp-pre {
+  position: absolute;
+  left: 13px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--texto-suave);
+  font-weight: 500;
+  pointer-events: none;
+}
+input[type=number] {
+  width: 100%;
+  height: 50px;
+  border: 1.5px solid var(--borda);
+  border-radius: 11px;
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--texto);
+  padding: 0 14px;
+  outline: none;
+  -moz-appearance: textfield;
+  transition: border-color .2s, box-shadow .2s;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+input[type=number].pre { padding-left: 30px; }
+input[type=number]:focus {
+  border-color: var(--verde-medio);
+  box-shadow: 0 0 0 3px rgba(108,139,45,.1);
+}
+
+/* Chips de mês */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 6px 13px;
+  border-radius: 20px;
+  border: 1.5px solid var(--borda);
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--texto-suave);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--verde-medio); color: var(--verde-escuro); }
+.chip.on {
+  background: var(--verde-medio);
+  border-color: var(--verde-medio);
+  color: #fff;
+}
+
+/* Panes */
+.pane { display: none; }
+.pane.on { display: block; }
+
+/* Resultado */
+.resultado {
+  display: none;
+  margin-top: 1.25rem;
+  background: linear-gradient(135deg, #eef3e3, #e4eddc);
+  border-radius: 13px;
+  padding: 1.25rem 1.25rem 1rem;
+  animation: up .25s ease;
+}
+.resultado.on { display: block; }
+@keyframes up { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+.res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: .875rem; }
+.res-lbl { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--verde-escuro); opacity: .65; margin-bottom: 3px; }
+.res-val { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--verde-escuro); line-height: 1.1; }
+.res-val.hi { color: var(--teal); }
+.res-formula { font-size: 11px; color: var(--verde-escuro); opacity: .55; line-height: 1.55; border-top: 1px solid rgba(96,109,61,.15); padding-top: .75rem; }
+
+/* Botão CTA */
+.cta-btn {
+  display: none;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 14px;
+  background: var(--amarelo);
+  border: none;
+  border-radius: 11px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--verde-escuro);
+  cursor: pointer;
+  transition: all .18s;
+  text-align: center;
+  letter-spacing: .01em;
+}
+.cta-btn.on { display: block; }
+.cta-btn:hover { background: #f0a800; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(255,184,47,.35); }
+.cta-btn:active { transform: translateY(0); }
+
+/* Histórico */
+.hist-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--borda);
+  font-size: 13px;
+}
+.hist-row:last-child { border-bottom: none; }
+.hist-mes { color: var(--texto-suave); }
+.hist-res { font-size: 10px; color: #bbb; margin-top: 1px; }
+.hist-v { font-weight: 600; color: var(--verde-escuro); }
+.hist-row.atual .hist-mes { font-weight: 600; color: var(--texto); }
+.hist-row.atual .hist-v { color: var(--teal); }
+
+/* Footer */
+.footer {
+  font-size: 11px;
+  color: #b0b0b0;
+  line-height: 1.7;
+  text-align: center;
+  margin-top: .5rem;
+}
+.footer a { color: var(--teal); text-decoration: none; }
+
+/* Spinner */
+.spin-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--texto-suave); }
+.spin { width: 13px; height: 13px; border: 2px solid var(--borda); border-top-color: var(--verde-medio); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to{ transform:rotate(360deg) } }
+</style>
+</head>
+<body>
+
+<!-- Banner índice vigente -->
+<div class="indice-banner">
+  <div class="indice-banner-left">
+    <div class="indice-banner-tag">UPF/PR vigente</div>
+    <div class="indice-banner-mes" id="banner-mes">
+      <div class="spin-row"><div class="spin"></div><span>carregando...</span></div>
+    </div>
+  </div>
+  <div class="indice-banner-valor" id="banner-val">—</div>
+</div>
+
+<!-- Calculadora -->
+<div class="card">
+  <div class="card-title">Calculadora</div>
+  <div class="tabs">
+    <button class="tab on" onclick="trocarTab('r2u')">R$ → UPF</button>
+    <button class="tab" onclick="trocarTab('u2r')">UPF → R$</button>
+  </div>
+
+  <!-- Pane R$ → UPF -->
+  <div class="pane on" id="pane-r2u">
+    <label class="field-lbl">Valor em reais</label>
+    <div class="inp-wrap">
+      <span class="inp-pre">R$</span>
+      <input type="number" id="v-reais" class="pre" placeholder="0,00" min="0" step="0.01" oninput="calcR2U()">
+    </div>
+    <label class="field-lbl">Mês de referência</label>
+    <div class="chips" id="chips-r"></div>
+    <div class="resultado" id="res-r2u"></div>
+    <button class="cta-btn" id="cta-r2u" onclick="scrollParaForm()">
+      Preciso de ajuda com o licenciamento →
+    </button>
+  </div>
+
+  <!-- Pane UPF → R$ -->
+  <div class="pane" id="pane-u2r">
+    <label class="field-lbl">Quantidade de UPF/PR</label>
+    <div class="inp-wrap">
+      <input type="number" id="v-upf" placeholder="0,0000" min="0" step="0.0001" oninput="calcU2R()">
+    </div>
+    <label class="field-lbl">Mês de referência</label>
+    <div class="chips" id="chips-u"></div>
+    <div class="resultado" id="res-u2r"></div>
+    <button class="cta-btn" id="cta-u2r" onclick="scrollParaForm()">
+      Preciso de ajuda com o licenciamento →
+    </button>
+  </div>
+</div>
+
+<!-- Histórico -->
+<div class="card">
+  <div class="card-title">Histórico 2025</div>
+  <div id="historico"><div class="spin-row"><div class="spin"></div><span>carregando...</span></div></div>
+</div>
+
+<div class="footer">
+  Fonte: Resoluções SEFA/PR · Atualização mensal<br>
+  Confirme em <a href="https://www.arinternet.pr.gov.br/portalsefa/indicadores.asp" target="_blank">arinternet.pr.gov.br/portalsefa</a>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// CONFIGURAÇÃO — cole aqui a URL pública do seu Google Sheets
+// Arquivo → Compartilhar → Publicar na web → CSV
+// Estrutura da planilha: col A = mês | col B = valor | col C = resolução
+// ─────────────────────────────────────────────────────────────
+const SHEETS_URL = 'SUA_URL_AQUI';
+
+const FALLBACK = [
+  { mes:'jan/2025', valor:140.87, res:'Res. 1556/2024' },
+  { mes:'fev/2025', valor:141.62, res:'Res. 57/2025' },
+  { mes:'mar/2025', valor:141.85, res:'Res. 176/2025' },
+  { mes:'abr/2025', valor:143.71, res:'Res. 291/2025' },
+  { mes:'mai/2025', valor:144.23, res:'Res. 360/2025' },
+];
+
+let dados = [];
+let sel = { 'r2u': null, 'u2r': null };
+let modoAtual = 'r2u';
+
+async function init() {
+  if (SHEETS_URL && SHEETS_URL !== 'SUA_URL_AQUI') {
+    try {
+      const r = await fetch(SHEETS_URL);
+      const csv = await r.text();
+      dados = csv.trim().split('\n').slice(1).map(l => {
+        const p = l.split(',');
+        return { mes: p[0]?.trim().replace(/"/g,''), valor: parseFloat(p[1]), res: p[2]?.trim().replace(/"/g,'') || '' };
+      }).filter(d => d.mes && !isNaN(d.valor));
+    } catch(e) { dados = FALLBACK; }
+  } else {
+    dados = FALLBACK;
+  }
+  renderTudo();
+}
+
+function renderTudo() {
+  if (!dados.length) return;
+  const ult = dados[dados.length - 1];
+
+  // Banner
+  document.getElementById('banner-mes').innerHTML =
+    `<span class="dot"></span>${ult.mes}`;
+  document.getElementById('banner-val').textContent =
+    'R$ ' + ult.valor.toFixed(2).replace('.', ',');
+
+  // Chips
+  renderChips('chips-r', 'r2u');
+  renderChips('chips-u', 'u2r');
+
+  // Histórico
+  document.getElementById('historico').innerHTML =
+    dados.slice().reverse().map((d, i) =>
+      `<div class="hist-row ${i===0?'atual':''}">
+        <div>
+          <div class="hist-mes">${d.mes}</div>
+          <div class="hist-res">${d.res}</div>
+        </div>
+        <div class="hist-v">R$ ${d.valor.toFixed(2).replace('.',',')}</div>
+      </div>`
+    ).join('');
+}
+
+function renderChips(id, modo) {
+  const el = document.getElementById(id);
+  el.innerHTML = dados.map((d, i) =>
+    `<button class="chip ${i===dados.length-1?'on':''}"
+      onclick="selectMes('${modo}',${i},this)">${d.mes}</button>`
+  ).join('');
+  sel[modo] = dados.length - 1;
+}
+
+function selectMes(modo, idx, btn) {
+  sel[modo] = idx;
+  const cid = modo==='r2u' ? 'chips-r' : 'chips-u';
+  document.querySelectorAll(`#${cid} .chip`).forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  modo==='r2u' ? calcR2U() : calcU2R();
+}
+
+function fmt2(n) { return n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmt4(n) { return n.toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4}); }
+
+function calcR2U() {
+  const v = parseFloat(document.getElementById('v-reais').value);
+  const res = document.getElementById('res-r2u');
+  const cta = document.getElementById('cta-r2u');
+  if (!v || v <= 0 || !dados.length) { res.classList.remove('on'); cta.classList.remove('on'); return; }
+  const d = dados[sel['r2u'] ?? dados.length-1];
+  const upfs = v / d.valor;
+  res.innerHTML = `
+    <div class="res-grid">
+      <div><div class="res-lbl">Capital social</div><div class="res-val">R$ ${fmt2(v)}</div></div>
+      <div><div class="res-lbl">Em UPF/PR · ${d.mes}</div><div class="res-val hi">${fmt4(upfs)} UPF</div></div>
+    </div>
+    <div class="res-formula">R$ ${fmt2(v)} ÷ R$ ${d.valor.toFixed(2).replace('.',',')} = ${fmt4(upfs)} UPF/PR (${d.mes})</div>`;
+  res.classList.add('on');
+  cta.classList.add('on');
+}
+
+function calcU2R() {
+  const q = parseFloat(document.getElementById('v-upf').value);
+  const res = document.getElementById('res-u2r');
+  const cta = document.getElementById('cta-u2r');
+  if (!q || q <= 0 || !dados.length) { res.classList.remove('on'); cta.classList.remove('on'); return; }
+  const d = dados[sel['u2r'] ?? dados.length-1];
+  const reais = q * d.valor;
+  res.innerHTML = `
+    <div class="res-grid">
+      <div><div class="res-lbl">UPF/PR · ${d.mes}</div><div class="res-val">${fmt4(q)} UPF</div></div>
+      <div><div class="res-lbl">Equivalente em R$</div><div class="res-val hi">R$ ${fmt2(reais)}</div></div>
+    </div>
+    <div class="res-formula">${fmt4(q)} UPF × R$ ${d.valor.toFixed(2).replace('.',',')} = R$ ${fmt2(reais)} (${d.mes})</div>`;
+  res.classList.add('on');
+  cta.classList.add('on');
+}
+
+function trocarTab(modo) {
+  modoAtual = modo;
+  document.querySelectorAll('.tab').forEach((b,i) =>
+    b.classList.toggle('on', (i===0&&modo==='r2u')||(i===1&&modo==='u2r')));
+  document.getElementById('pane-r2u').classList.toggle('on', modo==='r2u');
+  document.getElementById('pane-u2r').classList.toggle('on', modo==='u2r');
+}
+
+function scrollParaForm() {
+  // Envia mensagem para o WordPress pai rolar até o formulário
+  window.parent.postMessage({ action: 'scrollToForm' }, '*');
+}
+
+init();
+</script>
+</body>
+</html>
